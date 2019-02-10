@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 /*
  * Create a list that holds all of your cards
  */
@@ -81,9 +83,36 @@ function handleCardClick(event) {
     }
 }
 
+/**
+ * Set fill on start
+ * 
+ * @param {number} v - number of stars to fill; [0  n] increments of 0.5
+ */
+function setStars(v) {
+    var stars = document.querySelectorAll('ul.stars li i'),
+        comp = v - 1; // shift v from one-based to zero-based "comp"
+    stars.forEach(function(e, i) {
+        if(comp < i) {
+            if(i - comp === 0.5) { // i + 0.5 stars: set this star to half
+                e.classList.remove('fa-star');
+                e.classList.remove('fa-star-o');
+                e.classList.add('fa-star-half-o');
+            } else { // fewer than i + 0.5 stars: leave this star open
+                e.classList.remove('fa-star');
+                e.classList.remove('fa-star-half-o');
+                e.classList.add('fa-star-o');
+            }
+        } else { // at least i + 1 stars: fill this star
+            e.classList.remove('fa-star-o');
+            e.classList.remove('fa-star-half-o');
+            e.classList.add('fa-star');
+        }
+    });
+}
+
 function cardsMatch(cards) {
     var a = cardSelection[0].querySelector('i').classList.value,
-        b = cardSelection[1].querySelector('i').classList.value
+        b = cardSelection[1].querySelector('i').classList.value;
     return a === b;
 }
 
