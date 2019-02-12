@@ -43,11 +43,11 @@ var cardElements = document.querySelectorAll('.card'),
     moves = document.querySelector('.moves');
 
 document.querySelector('.restart')
-    .addEventListener('click', function(e) {
+    .addEventListener('click', function (e) {
         init();
     });
 
-cardElements.forEach(function(card) {
+cardElements.forEach(function (card) {
     card.addEventListener('click', handleCardClick);
 });
 
@@ -72,7 +72,7 @@ function handleCardClick(event) {
 
             } else {
 
-                setTimeout(function() {
+                setTimeout(function () {
 
                     cardSelection.forEach(c => c.classList.remove('show', 'open'));
                     cardSelection = [];
@@ -84,16 +84,16 @@ function handleCardClick(event) {
 }
 
 /**
- * Set fill on start
+ * Set fill on stars
  * 
  * @param {number} v - number of stars to fill; [0  n] increments of 0.5
  */
 function setStars(v) {
     var stars = document.querySelectorAll('ul.stars li i'),
         comp = v - 1; // shift v from one-based to zero-based "comp"
-    stars.forEach(function(e, i) {
-        if(comp < i) {
-            if(i - comp === 0.5) { // i + 0.5 stars: set this star to half
+    stars.forEach(function (e, i) {
+        if (comp < i) {
+            if (i - comp === 0.5) { // i + 0.5 stars: set this star to half
                 e.classList.remove('fa-star');
                 e.classList.remove('fa-star-o');
                 e.classList.add('fa-star-half-o');
@@ -108,6 +108,35 @@ function setStars(v) {
             e.classList.add('fa-star');
         }
     });
+}
+
+/*
+ *  Timer
+ */
+var _startTime = null;
+var _timerHandle = null;
+function stopTimer() {
+    clearInterval(_timerHandle);
+}
+function startTimer() {
+    _startTime = new Date().getTime();
+    _timerHandle = setInterval(function () {
+        showTime(new Date().getTime() - _startTime);
+    }, 1000);
+}
+function resetTimer() {
+    showTime(0);
+}
+function showTime(t) {
+    document.querySelector('.timer').innerText = getTimeString(t);
+}
+function getTimeString(t) {
+    var m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+    s = Math.floor((t % (1000 * 60)) / 1000);
+    return zeroPad(m) + ':' + zeroPad(s);
+}
+function zeroPad(n) {
+    return (n < 10 ? '0' : '') + n;
 }
 
 function cardsMatch(cards) {
