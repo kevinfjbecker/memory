@@ -39,43 +39,56 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-var cardElements = document.querySelectorAll('.card'),
-    moves = document.querySelector('.moves');
+var _cardElements = document.querySelectorAll('.card'),
+    _moves = document.querySelector('.moves');
 
 document.querySelector('.restart')
     .addEventListener('click', function (e) {
         init();
     });
 
-cardElements.forEach(function (card) {
+_cardElements.forEach(function (card) {
     card.addEventListener('click', handleCardClick);
 });
 
-var cardSelection = [];
+var _cardSelection = [];
+var _started = false;
+var _stars = 3;
 
 function handleCardClick(event) {
 
-    if (cardSelection.length < 2) {
+    if (_cardSelection.length < 2) {
 
-        cardSelection.push(this);
+        _cardSelection.push(this);
+        if(!_started) {
+            _started = true;
+            startTimer();
+        }
 
         this.classList.add('show', 'open');
 
-        if (cardSelection.length == 2) {
+        if (_cardSelection.length == 2) {
 
-            moves.innerText = Number(moves.innerText) + 1;
+            _moves.innerText = Number(_moves.innerText) + 1;
 
-            if (cardsMatch(cardSelection)) {
+            setStars(movesToStars(_moves.innerText));
 
-                cardSelection.forEach(c => c.classList.add('match'));
-                cardSelection = [];
+            if (cardsMatch(_cardSelection)) {
+
+                _cardSelection.forEach(c => c.classList.add('match'));
+                _cardSelection = [];
+
+                if(isComplete()) {
+                    stopTimer();
+                    setTimeout(function(){alert('Whoot! You did it!');}, 500);
+                }
 
             } else {
 
                 setTimeout(function () {
 
-                    cardSelection.forEach(c => c.classList.remove('show', 'open'));
-                    cardSelection = [];
+                    _cardSelection.forEach(c => c.classList.remove('show', 'open'));
+                    _cardSelection = [];
 
                 }, 1000);
             }
@@ -110,6 +123,26 @@ function setStars(v) {
     });
 }
 
+/**
+ *  Check if all cards are matched
+ */
+function isComplete() {
+    return document.querySelectorAll('.card').length === document.querySelectorAll('.card.match').length;
+}
+
+/**
+ * 
+ * @param {number} m - number of moves
+ * 
+ * decrease from 3 by half for every 4 stars over 8 
+ */
+function movesToStars(m) {
+    var calc = Math.round( (3 - m / 8 + 1) * 2 ) / 2;
+    if(calc > 3) return 3;
+    if(calc < 0) return 0;
+    return calc;
+}
+
 /*
  *  Timer
  */
@@ -140,16 +173,21 @@ function zeroPad(n) {
 }
 
 function cardsMatch(cards) {
-    var a = cardSelection[0].querySelector('i').classList.value,
-        b = cardSelection[1].querySelector('i').classList.value;
+    var a = _cardSelection[0].querySelector('i').classList.value,
+        b = _cardSelection[1].querySelector('i').classList.value;
     return a === b;
 }
 
 function init() {
 
-    moves.innerText = 0;
+    _moves.innerText = 0;
 
-    cardElements.forEach(c => c.classList.remove('match', 'open', 'show'));
+    _cardElements.forEach(c => c.classList.remove('match', 'open', 'show'));
+
+    stopTimer();
+    resetTimer();
+
+    _started = false;
 }
 
 init();
