@@ -59,7 +59,12 @@ function handleCardClick(event) {
 
     if (_cardSelection.length < 2) {
 
+        if(!isValidSelection(this)) {
+            return;
+        }
+
         _cardSelection.push(this);
+
         if(!_started) {
             _started = true;
             startTimer();
@@ -94,6 +99,14 @@ function handleCardClick(event) {
             }
         }
     }
+}
+function isValidSelection(cardElement) {
+    return !cardElement.classList.contains('open');
+}
+function cardsMatch(cards) {
+    var a = _cardSelection[0].querySelector('i').classList.value,
+        b = _cardSelection[1].querySelector('i').classList.value;
+    return a === b;
 }
 
 /**
@@ -170,12 +183,6 @@ function getTimeString(t) {
 }
 function zeroPad(n) {
     return (n < 10 ? '0' : '') + n;
-}
-
-function cardsMatch(cards) {
-    var a = _cardSelection[0].querySelector('i').classList.value,
-        b = _cardSelection[1].querySelector('i').classList.value;
-    return a === b;
 }
 
 function init() {
