@@ -189,6 +189,8 @@ function init() {
 
     _moves.innerText = 0;
 
+    setStars(3);
+
     _cardElements.forEach(c => c.classList.remove('match', 'open', 'show'));
 
     stopTimer();
